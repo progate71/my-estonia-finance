@@ -70,3 +70,18 @@ with tab2:
         # Кнопка экспорта
         csv = st.session_state.costs.to_csv(index=False).encode('utf-8')
         st.download_button("Скачать отчет (CSV)", csv, "finances.csv", "text/csv")
+
+# --- БЛОК AI АНАЛИЗА ---
+st.subheader("🤖 Умный анализ расходов")
+user_query = st.text_input("Спроси ИИ о твоих финансах (например: 'На чем я могу сэкономить?' или 'Разбери мои траты за неделю')")
+
+if st.button("Анализировать"):
+    if api_key:
+        model = genai.GenerativeModel('gemini-1.5-flash')
+        # Передаем данные из таблицы в ИИ
+        context = f"Это данные моих расходов в Эстонии: {st.session_state.costs.to_string()}. Налоги: 24%. Дай краткий совет."
+        response = model.generate_content(context)
+        st.info(response.text)
+    else:
+        st.error("Сначала введите API Key в боковой панели!")
+
