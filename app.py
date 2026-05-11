@@ -57,8 +57,7 @@ with tab1:
                                 columns=st.session_state.costs.columns)
         st.session_state.costs = pd.concat([st.session_state.costs, new_data], ignore_index=True)
         st.session_state.costs.to_csv('my_expenses.csv', index=False)
-        st.balloons()
-
+        st.balloons() 
 with tab2:
     st.subheader("Твои транзакции")
     st.dataframe(st.session_state.costs, use_container_width=True)
