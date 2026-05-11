@@ -71,17 +71,36 @@ with tab2:
         csv = st.session_state.costs.to_csv(index=False).encode('utf-8')
         st.download_button("Скачать отчет (CSV)", csv, "finances.csv", "text/csv")
 
-# --- БЛОК AI АНАЛИЗА ---
+# --- # --- БЛОК AI АНАЛИЗА (ФИКС) ---
+st.divider()
 st.subheader("🤖 Умный анализ расходов")
-user_query = st.text_input("Спроси ИИ о твоих финансах (например: 'На чем я могу сэкономить?' или 'Разбери мои траты за неделю')")
+user_query = st.text_input("Спроси ИИ о твоих финансах", placeholder="Например: Сделай краткий обзор моих трат")
 
 if st.button("Анализировать"):
-    if api_key:
-        model = genai.GenerativeModel('models/gemini-1.5-flash')
-        # Передаем данные из таблицы в ИИ
-        context = f"Это данные моих расходов в Эстонии: {st.session_state.costs.to_string()}. Налоги: 24%. Дай краткий совет."
-        response = model.generate_content(context)
-        st.info(response.text)
+    if not api_key:
+        st.error("Сначала введите API Key!")
+    elif st.session_state.costs.empty:
+        st.warning("База данных пока пуста. Добавьте хотя бы одну запись (доход или расход).")
     else:
-        st.error("Сначала введите API Key в боковой панели!")
+        try:
+            # Используем модель gemini-1.5-pro, она стабильнее для API в ЕС
+            model = genai.GenerativeModel('gemini-1.5-pro')
+            
+            # Подготовка данных
+            data_str = st.session_state.costs.to_string()
+            prompt = f"""
+            Ты - финансовый эксперт по Эстонии. 
+            Вот мои данные (2026 год, налоги 24%, необлагаемый минимум 700 евро):
+            {data_str}
+            
+            Ответь на вопрос пользователя: {user_query}
+            Пиши кратко и по делу.
+            """
+            
+            with st.spinner('ИИ изучает ваши счета...'):
+                response = model.generate_content(prompt)
+                st.info(response.text)
+        except Exception as e:
+            st.error(f"Произошла ошибка ИИ. Попробуйте сменить модель на 'gemini-1.5-flash-latest' или проверьте лимиты ключа. Ошибка: {e}")
+
 
