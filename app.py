@@ -77,7 +77,7 @@ user_query = st.text_input("Спроси ИИ о твоих финансах (н
 
 if st.button("Анализировать"):
     if api_key:
-        model = genai.GenerativeModel('gemini-1.5-flash')
+        model = genai.GenerativeModel('models/gemini-1.5-flash')
         # Передаем данные из таблицы в ИИ
         context = f"Это данные моих расходов в Эстонии: {st.session_state.costs.to_string()}. Налоги: 24%. Дай краткий совет."
         response = model.generate_content(context)
