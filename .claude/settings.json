@@ -1,3 +1,16 @@
 {
-  "enableAllProjectMcpServers": true
+  "enableAllProjectMcpServers": true,
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if ! command -v glyph &>/dev/null; then GOBIN=/usr/local/bin go install github.com/benmyles/glyph@latest 2>/dev/null || true; fi",
+            "timeout": 60
+          }
+        ]
+      }
+    ]
+  }
 }
