@@ -3,6 +3,10 @@
     "playwright": {
       "command": "npx",
       "args": ["@playwright/mcp@latest"]
+    },
+    "glyph": {
+      "command": "/usr/local/bin/glyph",
+      "args": ["mcp"]
     }
   }
 }
